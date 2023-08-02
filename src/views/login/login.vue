@@ -71,7 +71,21 @@ import {commonUrl} from "../../api/api.js"
 						//发送登录请求
 						this.request.post(commonUrl.login, params).then(res=>{
 							if(res.code == 200){
-								this.$message.success(res.message);
+								//获取data当中的菜单值
+								res.data.menus.forEach((item, index)=>{
+									const menu = {
+										path: item.path,
+										name: item.cname,
+										component: ()=>import("@/views"+item.component)
+									}
+									this.$router.addRoute("home", menu); //添加动态菜单，并指定路由
+								});
+								this.$store.commit("setMenu", JSON.stringify(res.data.menus)) //菜单放到缓存当中
+								//token和user放到缓存中
+								this.$store.commit("setToken", res.data.token);
+								this.$store.commit("setUser", res.data.user);
+								// this.$message.success(res.message);
+								this.$router.push("/home/content");
 							}
 							else{
 								this.$message.error(res.message);
@@ -83,11 +97,10 @@ import {commonUrl} from "../../api/api.js"
 						this.$message.error("请根据提示正确填写用户名和密码");
 						return false;
 					}
-				})
+				});
 			}
 		}
     }
-	
 </script>
 
 <style lang="less">
