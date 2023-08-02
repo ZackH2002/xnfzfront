@@ -37,9 +37,9 @@ request.interceptors.response.use(
     response=>{
         loadingInstance.close()
         if(response.status == 200){
-            return response.data
+            return response.data;
         }
-        return -1
+        return -1;
     },
     error=>{
         return Promise.reject(error)

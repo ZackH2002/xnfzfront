@@ -17,8 +17,8 @@
 					<el-form-item label="密码" prop="password">
 						<el-input type="password" v-model="form.password" placeholder="请输入密码"></el-input>
 					</el-form-item>
-					<el-button type="primary" class="login-but" @click="">登录</el-button>
-					<el-button>注册</el-button>
+					<el-button type="primary" class="login-but" @click="login('form')">登录</el-button>
+					<el-button @click="">注册</el-button>
 				</el-form>
 			</div>
         </el-col>
@@ -26,8 +26,7 @@
 </template>
 
 <script>
-import request from '@/utils/request';
-
+import {commonUrl} from "../../api/api.js"
     export default{
         data(){
             return{
@@ -61,18 +60,34 @@ import request from '@/utils/request';
 			}
         },
 		methods: {
-				login(){
-					let param = {
-						account: "admin",
-						password: "123456"
+			login(formName){
+				this.$refs[formName].validate((valid)=>{
+					if(valid){
+						//登录
+						let params = {
+							account: this.form.account,
+							password: this.form.password
+						}
+						//发送登录请求
+						this.request.post(commonUrl.login, params).then(res=>{
+							if(res.code == 200){
+								this.$message.success(res.message);
+							}
+							else{
+								this.$message.error(res.message);
+							}
+						})
 					}
-					request.post("login", param).then(res=>{
-						console.log(res)
-					})
-				}
+					else{
+						//校验失败
+						this.$message.error("请根据提示正确填写用户名和密码");
+						return false;
+					}
+				})
 			}
+		}
     }
-
+	
 </script>
 
 <style lang="less">
