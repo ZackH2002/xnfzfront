@@ -4,7 +4,6 @@
 
 import axios from "axios";
 import { Loading } from "element-ui";
-import { config } from "vue/types/umd";
 const URL = "http://localhost:8088"
 
 //请求接口时候的加载对象
