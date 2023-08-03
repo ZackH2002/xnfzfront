@@ -18,7 +18,7 @@
 						<el-input type="password" v-model="form.password" placeholder="请输入密码"></el-input>
 					</el-form-item>
 					<el-button type="primary" class="login-but" @click="login('form')">登录</el-button>
-					<el-button @click="register">注册</el-button>
+					<el-button @click="register()">注册</el-button>
 				</el-form>
 			</div>
         </el-col>
@@ -27,6 +27,7 @@
 
 <script>
 import {commonUrl} from "../../api/api.js"
+
     export default{
         data(){
             return{
@@ -84,7 +85,6 @@ import {commonUrl} from "../../api/api.js"
 								//token和user放到缓存中
 								this.$store.commit("setToken", res.data.token);
 								this.$store.commit("setUser", res.data.user);
-								// this.$message.success(res.message);
 								this.$router.push("/home/content");
 							}
 							else{

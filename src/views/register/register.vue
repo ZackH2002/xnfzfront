@@ -34,7 +34,7 @@
                     <el-input v-model="form.number"></el-input>
                 </el-form-item>
                 <el-form-item>
-                    <el-button type="primary" class="register-but" @click="">注册</el-button>
+                    <el-button type="primary" class="register-but" @click="register('form')">注册</el-button>
                 </el-form-item>
             </el-form>
         </div></el-col> 
@@ -43,6 +43,9 @@
 </template>
 
 <script>
+import { commonUrl } from '@/api/api';
+import { userUrl } from '@/api/api';
+
     export default{
         data(){
             // 验证密码
@@ -52,11 +55,12 @@
                 }
                 else{
                     if(this.form.passwordConfirm !== ""){
-                        this.$refs.form.validatePass("passwordConfirm")
+                        this.$refs.form.validateField("passwordConfirm")
                     }
                     callback();
                 }
             };
+
             var validatePassConfirm = (rule, value, callback)=>{
                 if(value === ""){
                     callback(new Error("请确认密码"));
@@ -68,6 +72,7 @@
                     callback();
                 }
             };
+
             var validatePhoneNumber = (rule, value, callback)=>{
                 const reg = /^[1][3,4,5,6,7,8,9,][0-9]{9}$/;
                 var flag = reg.test(value);
@@ -78,6 +83,7 @@
                     callback();
                 }
             };
+
             var validateEmail = (rule, value, callback)=>{
                 const reg = /^[A-Za-z0-9\u4e00-\u9fa5]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/;
                 var flag = reg.test(value);
@@ -88,6 +94,19 @@
                     callback();
                 }
             };
+
+            // 校验用户名是否为已经使用的
+            var checkAccount = (rule, value, callback)=>{
+                this.request.post(userUrl.accountIsExist, value).then(res=>{
+                    if(res.code == 500){
+                        callback(new Error(res.message));
+                    }
+                    else{
+                        callback();
+                    }
+                })
+            };
+
             return{
                 userTypeOption:[{
                     codeValue: "",
@@ -115,6 +134,10 @@
                             min: 3,
                             max: 12,
                             message: "长度3-12位之间",
+                            trigger: "blur"
+                        },
+                        {
+                            validator: checkAccount,
                             trigger: "blur"
                         }
                 ],
@@ -197,7 +220,41 @@
                 ]
                 }
             }
-        }
+        },
+        methods: {
+            loadUserType(){
+                this.request.get(commonUrl.loadDictionaryData+"userType" ).then(res => {
+                    if(res.code == 200){
+                        this.userTypeOption = res.data.data;
+                    }
+                })
+            },
+            register(formName){
+                this.$refs[formName].validate((valid)=>{
+                    if(valid){
+                        let parmas = {
+                            account: this.form.account,
+                            password: this.form.password,
+                            name: this.form.name,
+                            phone: this.form.phone,
+                            email: this.form.email,
+                            type: this.form.userType,
+                            number: this.form.number
+                        };
+                        this.request.post(userUrl.register, parmas).then(res=>{
+                            this.$alert(res.message);
+                            this.$router.push("/")
+                        });                 
+                    }
+                    else{
+                        this.$message("请正确填写表单数据")
+                    }
+                })
+            }
+        },
+        mounted(){
+                this.loadUserType();
+            }
     }
 </script>
 

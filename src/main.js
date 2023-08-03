@@ -7,7 +7,6 @@ import request from './utils/request'
 
 //全局直接使用request
 Vue.prototype.request = request
-
 Vue.config.productionTip = false
 
 //使用路由全局前置守卫，验证用户是否登录授权
