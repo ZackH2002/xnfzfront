@@ -18,7 +18,7 @@
 						<el-input type="password" v-model="form.password" placeholder="请输入密码"></el-input>
 					</el-form-item>
 					<el-button type="primary" class="login-but" @click="login('form')">登录</el-button>
-					<el-button @click="">注册</el-button>
+					<el-button @click="register">注册</el-button>
 				</el-form>
 			</div>
         </el-col>
@@ -98,7 +98,13 @@ import {commonUrl} from "../../api/api.js"
 						return false;
 					}
 				});
+			},
+			register(){
+				this.$router.push("/register")
 			}
+		},
+		created(){
+
 		}
     }
 </script>

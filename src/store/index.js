@@ -23,6 +23,7 @@ export default new Vuex.Store({
       localStorage.setItem("token", token);
     },
     setMenu(state, menu){
+      state.menu = menu;
       localStorage.setItem("menu", menu);
     },
     logout(state){
