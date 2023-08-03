@@ -27,7 +27,6 @@
 
 <script>
 import {commonUrl} from "../../api/api.js"
-
     export default{
         data(){
             return{
@@ -99,35 +98,14 @@ import {commonUrl} from "../../api/api.js"
 					}
 				});
 			},
-			rules: {
-				account: [
-					{
-						required: true,
-						message: "请输入账号",
-						trigger: "blur"
-					},
-					{
-						min: 3,
-						max: 12,
-						message: "长度为3-12之间",
-						trigger: "blur"
-					}
-				],
-				password: [
-					{
-						required: true,
-						message: "请输入密码",
-						trigger: "blur"
-					}
-				]
-			}
-		},
-		register() {
+			register() {
 			this.$router.push("/register")
+			}
 		},
 		created() {
 
 		}
+	
 }
 </script>
 
