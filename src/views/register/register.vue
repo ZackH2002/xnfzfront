@@ -67,8 +67,27 @@
                 else{
                     callback();
                 }
-            }
-
+            };
+            var validatePhoneNumber = (rule, value, callback)=>{
+                const reg = /^[1][3,4,5,6,7,8,9,][0-9]{9}$/;
+                var flag = reg.test(value);
+                if(!flag){
+                    callback(new Error("电话号码格式不正确，请重新输入"));
+                }
+                else{
+                    callback();
+                }
+            };
+            var validateEmail = (rule, value, callback)=>{
+                const reg = /^[A-Za-z0-9\u4e00-\u9fa5]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/;
+                var flag = reg.test(value);
+                if(!flag){
+                    callback(new Error("邮箱格式不正确，请重新输入"));
+                }
+                else{
+                    callback();
+                }
+            };
             return{
                 userTypeOption:[{
                     codeValue: "",
@@ -130,6 +149,49 @@
                     },
                     {
                         validator: validatePassConfirm,
+                        trigger: "blur"
+                    }
+                ],
+                name:[
+                    {
+                        require: true,
+                        message: "请输入姓名",
+                        trigger: "blur"
+                    }
+                ],
+                phone: [
+                    {
+                        require: true,
+                        message: "请输入联系电话",
+                        trigger: "blur"
+                    },
+                    {
+                        validator: validatePhoneNumber,
+                        trigger: "blur"
+                    }
+                ],
+                email: [
+                    {
+                        require: true,
+                        message: "请输入邮箱",
+                        trigger: "blur"
+                    },
+                    {
+                        validator: validateEmail,
+                        trigger: "blur"
+                    }
+                ],
+                userType: [
+                    {
+                        require: true,
+                        message: "请选择用户类型",
+                        trigger: "blur"
+                    }
+                ],
+                number: [
+                    {
+                        require: true,
+                        message: "请输入编号",
                         trigger: "blur"
                     }
                 ]
