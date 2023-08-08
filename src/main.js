@@ -10,19 +10,19 @@ Vue.prototype.request = request
 Vue.config.productionTip = false
 
 //使用路由全局前置守卫，验证用户是否登录授权
-router.beforeEach((to, from, next)=>{
+router.beforeEach((to, from, next) => {
   //进入登录、注册也买你不需要拦截
-  if(to.path==="/login" || to.path==="/" || to.path === "/register"){
+  if (to.path === "/login" || to.path === "/" || to.path === "/register") {
     next();
   }
-  else{
+  else {
     let userToken = localStorage.getItem("token");
     // 判断token是否存在
-    if(!userToken){
+    if (!userToken) {
       alert("没有权限，请先登录");
       return next("/");
     }
-    else{
+    else {
       next();
     }
   }
