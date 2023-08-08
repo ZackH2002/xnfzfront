@@ -10,4 +10,5 @@ export function nullFormat(input) {
     if (input == undefined || input == null || input === '') {
         return '--';
     }
+    return input;
 }
