@@ -3,7 +3,15 @@
         <!-- 这是头部标签 -->
         <el-header>
             欢迎进入虚拟仿真实训平台后台管理系统
-            <el-button type="info" class="but" @click="logout">注销</el-button>
+            <el-dropdown class="dropdown" @command="handleCommand">
+                <span class="el-dropdown-link">
+                    {{ user.name }}<i class="el-icon-arrow-down el-icon--right"></i>
+                </span>
+                <el-dropdown-menu slot="dropdown">
+                    <el-dropdown-item command=1>用户信息</el-dropdown-item>
+                    <el-dropdown-item command=2>注销</el-dropdown-item>
+                </el-dropdown-menu>
+            </el-dropdown>
         </el-header>
 
         <el-container>
@@ -21,6 +29,22 @@
 <script>
 import NavMenu from "./navMenu.vue"
 export default {
+    data() {
+        return {
+            user: {
+                userId: '',
+                name: '',
+                account: '',
+                email: '',
+                password: '',
+                intro: '',
+                phone: '',
+                type: '',
+                createTime: '',
+                updateTime: ''
+            },
+        }
+    },
     components: {
         NavMenu
     },
@@ -29,15 +53,26 @@ export default {
         logout() {
             this.$store.commit("logout");
             this.$router.push("/");
+        },
+        handleCommand(command) {
+            if (command == 1) {
+
+            } else if (command == 2) {
+                this.$store.commit("logout");
+                this.$router.push("/");
+            }
         }
+    },
+    mounted() {
+        this.user = this.$store.state.user;
     }
 }
 </script>
 
 <style scoped>
-.but {
+.dropdown {
     float: right;
-    margin-top: 10px;
+    margin-right: 30px;
 }
 
 .el-header,

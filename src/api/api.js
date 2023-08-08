@@ -10,7 +10,12 @@ let userUrl = {
     accountIsExist: "/user/accountIsExist"
 }
 
-export{
+let simulationEquipmentUrl = {
+    qureySimulationEquipmentList: "/simulationEquipment/loadSimulationEquipmentData", //获取仿真设备列表
+}
+
+export {
     commonUrl,
-    userUrl
+    userUrl,
+    simulationEquipmentUrl
 }
