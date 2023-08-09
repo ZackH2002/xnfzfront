@@ -1,63 +1,164 @@
 <template>
   <div>
-    <el-table :data="tableData" border style="width: 100%">
-      <el-table-column fixed prop="number" label="设备编号" width="150">
-      </el-table-column>
-      <el-table-column prop="name" label="设备名称" width="150">
-      </el-table-column>
-      <el-table-column prop="type" label="类别" width="120">
-      </el-table-column>
-      <el-table-column prop="softwareSystem" label="软件系统" width="120">
-      </el-table-column>
-      <el-table-column prop="versionNumber" label="版本号" width="120">
-      </el-table-column>
-      <el-table-column prop="supplier" label="设备供应商" width="120">
-      </el-table-column>
-      <el-table-column prop="purpose" label="用途" width="120">
-      </el-table-column>
-      <el-table-column prop="laboratoryId" label="所属实验室" width="120">
-      </el-table-column>
-      <el-table-column prop="status" label="设备状态" width="120"
-        :filters="[{ text: '正常', value: '1' }, { text: '保修', value: '2' }, { text: '损坏', value: '3' }]"
-        :filter-method="filterTag" filter-placement="bottom-end">
-        <template slot-scope="scope">
-          <el-tag :type="tagType(scope.row.status)" disable-transitions>{{ tagText(scope.row.status) }}</el-tag>
-        </template>
-      </el-table-column>
-      <el-table-column label="更新时间" width="200">
-        <template slot-scope="scope">
-          {{ time(scope.row) }}
-        </template>
-      </el-table-column>
-      <el-table-column fixed="right" label="操作" width="250">
-        <template slot-scope="scope">
-          <el-button @click="viewDetails(scope.row)" type="text" size="small">查看</el-button>
-          <el-button type="text" size="small">编辑</el-button>
-          <el-button type="text" size="small">设备状态操作</el-button>
-        </template>
-      </el-table-column>
-    </el-table>
+    <el-button type="primary" icon="el-icon-edit" @click="showAddFrom()">新增设备</el-button>
+    <div class="table" style="padding: 20px;">
+      <el-table :key="mainTableKey" :data="tableData" border style="width: 100%">
+        <el-table-column fixed prop="number" label="设备编号" width="150">
+        </el-table-column>
+        <el-table-column prop="name" label="设备名称" width="150">
+        </el-table-column>
+        <el-table-column prop="type" label="类别" width="120">
+          <template slot-scope="scope">
+            {{ getCodeNameByValue(typeOption, scope.row.type) }}
+          </template>
+        </el-table-column>
+        <el-table-column prop="softwareSystem" label="软件系统" width="120">
+        </el-table-column>
+        <el-table-column prop="versionNumber" label="版本号" width="120">
+        </el-table-column>
+        <el-table-column label="设备供应商" width="120">
+          <template slot-scope="scope">
+            {{ getCodeNameByValue(supplierOption, scope.row.supplier) }}
+          </template>
+        </el-table-column>
+        <el-table-column prop="purpose" label="用途" width="120">
+          <template slot-scope="scope">
+            {{ getCodeNameByValue(purposeOption, scope.row.purpose) }}
+          </template>
+        </el-table-column>
+        <el-table-column prop="laboratoryId" label="所属实验室" width="120">
+        </el-table-column>
+        <el-table-column prop="status" label="设备状态" width="120"
+          :filters="[{ text: '正常', value: '1' }, { text: '保修', value: '2' }, { text: '损坏', value: '3' }]"
+          :filter-method="filterTag" filter-placement="bottom-end">
+          <template slot-scope="scope">
+            <el-tag :type="tagType(scope.row.status)" disable-transitions>{{
+              getCodeNameByValue(statusOption, scope.row.status) }}</el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column label="更新时间" width="200">
+          <template slot-scope="scope">
+            {{ time(scope.row) }}
+          </template>
+        </el-table-column>
+        <el-table-column fixed="right" label="操作" width="220">
+          <template slot-scope="scope">
+            <el-button @click="viewDetails(scope.row)" type="text" size="small">查看</el-button>
+            <el-button @click="showUpdateFrom(scope.row)" type="text" size="small">编辑</el-button>
+            <el-button @click="updateStatu(scope.row)" type="text" size="small">设备状态操作</el-button>
+            <el-button @click="showDelete(scope.row)" type="text" size="small">删除</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+    </div>
+    <!--控制分页部分-->
+    <div class="pagaination-tool" style="padding:15px; ">
+      <!--elementUI的分页控件-->
+      <el-pagination background :current-page.sync="currPage" @size-change="handleSizeChange"
+        @current-change="handleCurrentChange" :page-size="pageSize" layout="prev, pager, next, jumper" :total="total">
+      </el-pagination>
+    </div>
     <!-- 查看diaglog -->
-    <el-dialog title="设备详细信息" :visible.sync="dialogTableVisible">
+    <el-dialog title="设备详细信息" :visible.sync="dialogTableVisible" @close='closeDialog'>
       <el-descriptions direction="vertical" :column="2" border>
         <!-- 设备编号、设备名称 、类别 、软件系统 、版本号 、设备供应商 、用途 、所在实验室、 设备状态。 -->
         <el-descriptions-item label="设备编号">{{ simulationEquipment.number }}</el-descriptions-item>
         <el-descriptions-item label="设备名称">{{ simulationEquipment.name }}</el-descriptions-item>
-        <el-descriptions-item label="类别">{{ simulationEquipment.type }}</el-descriptions-item>
+        <el-descriptions-item label="类别">{{ getCodeNameByValue(typeOption,
+          simulationEquipment.type) }}</el-descriptions-item>
         <el-descriptions-item label="软件系统">{{ simulationEquipment.softwareSystem }}</el-descriptions-item>
         <el-descriptions-item label="版本号">{{ simulationEquipment.versionNumber }}</el-descriptions-item>
-        <el-descriptions-item label="设备供应商">{{ simulationEquipment.supplier }}</el-descriptions-item>
-        <el-descriptions-item label="用途">{{ simulationEquipment.purpose }}</el-descriptions-item>
+        <el-descriptions-item label="设备供应商">{{ getCodeNameByValue(supplierOption, simulationEquipment.supplier)
+        }}</el-descriptions-item>
+        <el-descriptions-item label="用途">{{ getCodeNameByValue(purposeOption, simulationEquipment.purpose)
+        }}</el-descriptions-item>
         <el-descriptions-item label="所在实验室">{{ simulationEquipment.laboratoryId }}</el-descriptions-item>
         <el-descriptions-item label="设备状态">
-          <el-tag :type="tagType(simulationEquipment.status)" disable-transitions>{{ tagText(simulationEquipment.status)
-          }}</el-tag>
+          <el-tag :type="tagType(simulationEquipment.status)" disable-transitions>{{ getCodeNameByValue(statusOption,
+            simulationEquipment.status) }}</el-tag>
         </el-descriptions-item>
       </el-descriptions>
     </el-dialog>
+    <!-- 编辑和新增窗口 -->
+    <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" center @close='closeDialog'>
+      <el-form ref="form" :model="simulationEquipment" :rules="rules" :label-position="labelPosition" label-width="150px">
+        <!-- 设备编码、缩略图、设备名称 、类别 、软件系统 、版本号 、设备供应商 、用途 、所在实验室、 设备状态； -->
+        <el-form-item label="设备编号" prop="number">
+          <el-input v-model="simulationEquipment.number" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="设备名称" prop="name">
+          <el-input v-model="simulationEquipment.name"></el-input>
+        </el-form-item>
+        <el-form-item label="类别" prop="type">
+          <el-select v-model="simulationEquipment.type" placeholder="请选择">
+            <el-option v-for="item in typeOption" :key="item.codeValue" :label="item.codeName" :value="item.codeValue">
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="软件系统和版本号">
+          <el-row>
+            <el-col :span="11">
+              软件系统<el-input v-model="simulationEquipment.softwareSystem"></el-input>
+            </el-col>
+            <el-col :span="11" style="float: right;">
+              版本号
+              <el-input v-model="simulationEquipment.versionNumber"></el-input>
+            </el-col>
+          </el-row>
+        </el-form-item>
+        <el-form-item label="设备供应商" prop="supplier">
+          <el-select v-model="simulationEquipment.supplier" placeholder="请选择">
+            <el-option v-for="item in supplierOption" :key="item.codeValue" :label="item.codeName"
+              :value="item.codeValue">
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="用途" prop="purpose">
+          <el-select v-model="simulationEquipment.purpose" placeholder="请选择">
+            <el-option v-for="item in purposeOption" :key="item.codeValue" :label="item.codeName" :value="item.codeValue">
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item v-if="dialogStatus == 'add'" label="设备状态" prop="status">
+          <el-select v-model="simulationEquipment.status" placeholder="请选择">
+            <el-option v-for="item in statusOption" :key="item.codeValue" :label="item.codeName" :value="item.codeValue">
+            </el-option>
+          </el-select>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" v-if="dialogStatus == 'add'" @click="submitAddForm(simulationEquipment)" style="
+          margin-right: 30px;">添加设备</el-button>
+        <el-button type="primary" v-if="dialogStatus == 'update'" @click="submitEditForm(simulationEquipment)" style="
+          margin-right: 30px;">修改设备</el-button>
+        <el-button @click="dialogFormVisible = false">取 消</el-button>
+      </div>
+    </el-dialog>
+    <el-dialog title="编辑仿真设备状态" :visible.sync="dialogStatusVisible" center width="600px" @close='closeDialog'>
+      <h3>设备名称:{{ simulationEquipment.name }}</h3>
+      <br>
+      <label>设备状态：</label>
+      <el-select v-model="simulationEquipment.status" placeholder="请选择">
+        <el-option v-for="item in statusOption" :key="item.codeValue" :label="item.codeName" :value="item.codeValue">
+        </el-option>
+      </el-select>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="submitStatu(simulationEquipment)" style="margin-right: 30px;">确 定</el-button>
+        <el-button @click="dialogStatusVisible = false">取 消</el-button>
+      </div>
+    </el-dialog>
+
+    <el-dialog title="提示" :visible.sync="dialogNoticeVisible" width="30%" :before-close="handleClose"
+      @close='closeDialog'>
+      <span>是否要删除改仿真设备</span>
+      <span slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="deleteEquipment(simulationEquipment)">确 定</el-button>
+        <el-button @click="dialogVisible = false">取 消</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
-
+<style></style>
 <script>
 import {
   simulationEquipmentUrl
@@ -74,56 +175,50 @@ export default {
     },
     tagType(status) {
       //状态为正常设置标签为primary
-      if (status === 1) {
+      if (status === '1') {
         return 'primary';
-      } else if (status === 2) {
+      } else if (status === '2') {
         //状态为保修
         return 'success';
-      } else if (status === 3) {
+      } else if (status === '3') {
         return 'danger';
       }
     },
-    tagText(status) {
-      if (status === 1) {
-        return '正常';
-      } else if (status === 2) {
-        //状态为保修
-        return '保修';
-      } else if (status === 3) {
-        return '损坏';
-      }
-    },
     time(row) {
-      if (row.updatTimes == undefined || row.updatTimes == null || row.updatTimes === '') {
-        return row.createTime;
+      if (row.updateTime == undefined || row.updateTime == null || row.updateTime === '') {
+        return dateFormat(row.createTime);
+
       } else {
-        return row.updateTime;
+        return dateFormat(row.updateTime);
       }
     },
     handleSizeChange(val) {
       //改变每页显示数量重新请求数据，重置当前页为第一页
       this.pageSize = val;
       this.currPage = 1;
-      this.getData()
+      this.listSimulationEquipmentList();
     },
     handleCurrentChange(val) {
       //点击改变当前页
       this.currPage = val;
-      this.getData()
+      this.listSimulationEquipmentList();
     },
     listSimulationEquipmentList() {
-      this.request.get(simulationEquipmentUrl.qureySimulationEquipmentList).then(res => {
-        res.data.data.forEach((item, index) => {
+      this.request.get(simulationEquipmentUrl.qureySimulationEquipmentList + "?current=" + this.currPage + "&size=" + this.pageSize).then(res => {
+        res.data.data.records.forEach((item, index) => {
           item.createTime = dateFormat(item.createTime);
           item.updateTime = dateFormat(item.updateTime);
           item.softwareSystem = nullFormat(item.softwareSystem);
           item.versionNumber = nullFormat(item.versionNumber);
-          item.laboratoryId = nullFormat(item.laboratoryId);
+          //item.laboratoryId = nullFormat(item.laboratoryId);
         })
-        this.tableData = res.data.data;
+        this.tableData = res.data.data.records;
+        this.total = res.data.data.total;
       })
+      this.mainTableKey = Math.random();
     },
     getRowData(row) {
+      this.simulationEquipment.simulationEquipmentId = row.simulationEquipmentId;
       this.simulationEquipment.number = row.number;
       this.simulationEquipment.name = row.name;
       this.simulationEquipment.type = row.type;
@@ -137,40 +232,254 @@ export default {
     viewDetails(row) {
       this.dialogTableVisible = true;
       this.getRowData(row);
-    }
+    },
+    showAddFrom() {
+      this.dialogStatus = 'add';
+      this.dialogFormVisible = true;
+    },
+    showUpdateFrom(row) {
+      this.dialogStatus = 'update';
+      this.getRowData(row);
+      this.dialogFormVisible = true;
+    },
+    updateStatu(row) {
+      this.dialogStatusVisible = true;
+      this.getRowData(row);
+    },
+    showDelete(row) {
+      this.dialogNoticeVisible = true;
+      this.getRowData(row);
+    },
+    loadType() {
+      this.request.get(simulationEquipmentUrl.loadDictionaryData + "simeqtype").then(res => {
+        if (res.code == 200) {
+          this.typeOption = res.data.data;
+        }
+      })
+    },
+    loadSupplier() {
+      this.request.get(simulationEquipmentUrl.loadDictionaryData + "supplier").then(res => {
+        if (res.code == 200) {
+          this.supplierOption = res.data.data;
+        }
+      })
+    },
+    loadPurpose() {
+      this.request.get(simulationEquipmentUrl.loadDictionaryData + "purpose").then(res => {
+        if (res.code == 200) {
+          this.purposeOption = res.data.data;
+        }
+      })
+    },
+    loadStatus() {
+      this.request.get(simulationEquipmentUrl.loadDictionaryData + "status").then(res => {
+        if (res.code == 200) {
+          this.statusOption = res.data.data;
+        }
+      })
+    },
+    getCodeNameByValue(typeOption, targetCodeValue) {
+      for (let i = 0; i < typeOption.length; i++) {
+        if (typeOption[i].codeValue == targetCodeValue) {
+          return typeOption[i].codeName;
+        }
+      }
+      return null;
+    },
+    submitEditForm(simulationEquipment) {
+      this.request.post(simulationEquipmentUrl.updateSimulationEquipment, simulationEquipment).then(res => {
+        if (res.code == 200) {
+          this.$message({
+            message: '修改成功',
+            type: 'success'
+          });
+        }
+      })
+      this.dialogFormVisible = false;
+      this.listSimulationEquipmentList();
+    },
+    submitStatu(simulationEquipment) {
+      this.request.post(simulationEquipmentUrl.updateSimulationEquipment, simulationEquipment).then(res => {
+        if (res.code == 200) {
+          this.$message({
+            message: '修改状态成功',
+            type: 'success'
+          });
+        }
+      })
+      this.dialogStatusVisible = false;
+      this.listSimulationEquipmentList();
+    },
+    deleteEquipment(simulationEquipment) {
+      this.request.post(simulationEquipmentUrl.deleteSimulationEquipment + "?simulationEquipmentId=" + simulationEquipment.simulationEquipmentId).then(res => {
+        if (res.code == 200) {
+          this.$message({
+            message: '删除成功',
+            type: 'success'
+          });
+        }
+      })
+      this.dialogNoticeVisible = false;
+      this.listSimulationEquipmentList();
+    },
+    submitAddForm(simulationEquipment) {
+      this.request.post(simulationEquipmentUrl.addSimulationEquipment, simulationEquipment).then(res => {
+        if (res.code == 200) {
+          this.$message({
+            message: '新增仿真设备成功',
+            type: 'success'
+          });
+        }
+      })
+      this.dialogFormVisible = false;
+      //this.clearSimulationData();
+      this.listSimulationEquipmentList();
+    },
+    clearSimulationData() {
+      this.simulationEquipment.simulationEquipmentId = '';
+      this.simulationEquipment.number = '';
+      this.simulationEquipment.name = '';
+      this.simulationEquipment.type = '';
+      this.simulationEquipment.softwareSystem = '';
+      this.simulationEquipment.versionNumber = '';
+      this.simulationEquipment.supplier = '';
+      this.simulationEquipment.purpose = '';
+      this.simulationEquipment.laboratoryId = '';
+      this.simulationEquipment.status = '';
+      this.simulationEquipment.createTime = '';
+      this.simulationEquipment.updateTime = '';
+    },
+    //关闭对话框清空数据
+    closeDialog() {
+      this.clearSimulationData();
+    },
   },
 
   data() {
     return {
+      //定义变量控制表格刷新，数据更新后mainTableKey随机。
+      mainTableKey: 1,
       total: 0,
       currPage: 1,  //默认第一页
-      pageSize: 10, //默认展示10条数据
+      pageSize: 12,
+      formLabelWidth: '150px',
+      labelPosition: 'left',
+      //默认展示12条数据
       perpage: [
         { value: 10, label: "10" },
         { value: 20, label: "20" },
       ],
+      dialogStatus: 'add',
+      textMap: {
+        add: '新增仿真设备',
+        update: '更新仿真设备信息'
+      },
       tableData: [],
+      //查看窗口
       dialogTableVisible: false,
+      //修改窗口
+      dialogFormVisible: false,
+      //状态修改窗口
+      dialogStatusVisible: false,
+      //删除提示窗口
+      dialogNoticeVisible: false,
       // 设备编号、设备名称 、类别 、软件系统 、版本号 、设备供应商 、用途 、所在实验室、 设备状态。
       simulationEquipment: {
         simulationEquipmentId: '',
         name: '',
         number: '',
-        type: null,
+        type: '',
         softwareSystem: '',
         versionNumber: null,
-        supplier: "2",
-        status: 1,
-        purpose: "23",
+        supplier: "",
+        status: null,
+        purpose: "",
         laboratoryId: null,
         thumbnail: null,
-        createTime: "2023-07-21T06:27:21.000+00:00",
-        updateTime: null
-      }
+        createTime: "",
+        updateTime: "",
+      },
+      rules: {
+        name: [
+          {
+            required: true,
+            message: "请输入设备名称",
+            trigger: "blur"
+          },
+          {
+            min: 3,
+            max: 12,
+            message: "长度3-12位之间",
+            trigger: "blur"
+          }
+        ],
+        number: [
+          {
+            required: true,
+            message: "请输入设备编号",
+            trigger: "blur"
+          },
+          {
+            min: 3,
+            max: 12,
+            message: "长度3-12位之间",
+            trigger: "blur"
+          }
+        ],
+        type: [
+          {
+            required: true,
+            message: "请选择类型",
+            trigger: "blur"
+          }
+        ],
+        purpose: [
+          {
+            required: true,
+            message: "请选择用途",
+            trigger: "blur"
+          }
+        ],
+        supplier: [
+          {
+            required: true,
+            message: "请选择供应商",
+            trigger: "blur"
+          }
+        ],
+        status: [
+          {
+            required: true,
+            message: "请选择设备状态",
+            trigger: "change"
+          }
+        ]
+      },
+      typeOption: [{
+        codeValue: "",
+        codeName: "",
+      }],
+      supplierOption: [{
+        codeValue: "",
+        codeName: "",
+      }],
+      purposeOption: [{
+        codeValue: "",
+        codeName: "",
+      }],
+      statusOption: [{
+        codeValue: "",
+        codeName: "",
+      }],
+      value: ''
     }
   },
   mounted() {
     this.listSimulationEquipmentList();
+    this.loadType();
+    this.loadSupplier();
+    this.loadPurpose();
+    this.loadStatus();
   }
 }
 </script>

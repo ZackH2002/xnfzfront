@@ -12,6 +12,10 @@ let userUrl = {
 
 let simulationEquipmentUrl = {
     qureySimulationEquipmentList: "/simulationEquipment/loadSimulationEquipmentData", //获取仿真设备列表
+    loadDictionaryData: "/dictionary/loadDictionaryData/",
+    updateSimulationEquipment: "/simulationEquipment/updateSimulationEquipment",
+    deleteSimulationEquipment: "/simulationEquipment/deleteSimulationEquipment",
+    addSimulationEquipment: "/simulationEquipment/addSimulationEquipment",
 }
 
 export {
