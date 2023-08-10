@@ -356,7 +356,8 @@ export default {
     },
     download() {
       console.log("click");
-      window.location = 'http://localhost:8088/simulationEquipment/downloadExcel'
+      url = simulationEquipmentUrl.download;
+      window.location = url;
 
     }
   },
