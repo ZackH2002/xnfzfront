@@ -87,7 +87,7 @@ export default {
     background-color: #E9EEF3;
     color: #333;
     text-align: center;
-    height: 780px;
+    height: 860px;
     /* line-height: 650px; */
 }
 
