@@ -16,6 +16,7 @@ let simulationEquipmentUrl = {
     updateSimulationEquipment: "/simulationEquipment/updateSimulationEquipment",
     deleteSimulationEquipment: "/simulationEquipment/deleteSimulationEquipment",
     addSimulationEquipment: "/simulationEquipment/addSimulationEquipment",
+    download: "/simulationEquipment/downloadExcel",
 }
 
 export {

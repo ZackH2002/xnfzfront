@@ -1,6 +1,7 @@
 <template>
   <div>
     <el-button type="primary" icon="el-icon-edit" @click="showAddFrom()">新增设备</el-button>
+    <el-button type="primary" icon="el-icon-edit" @click="download()">导出数据</el-button>
     <div class="table" style="padding: 20px;">
       <el-table :key="mainTableKey" :data="tableData" border style="width: 100%">
         <el-table-column fixed prop="number" label="设备编号" width="150">
@@ -353,6 +354,11 @@ export default {
     closeDialog() {
       this.clearSimulationData();
     },
+    download() {
+      console.log("click");
+      window.location = 'http://localhost:8088/simulationEquipment/downloadExcel'
+
+    }
   },
 
   data() {
