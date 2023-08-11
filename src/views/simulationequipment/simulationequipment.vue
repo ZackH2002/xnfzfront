@@ -1,13 +1,30 @@
 <template>
   <div>
-    <el-button type="primary" icon="el-icon-edit" @click="showAddFrom()">新增设备</el-button>
+    <div>
+      <el-form :inline="true" :model="qurey" class="demo-form-inline">
+        <el-form-item label="编号">
+          <el-input v-model="qurey.inputNumber" placeholder="编号"></el-input>
+        </el-form-item>
+        <el-form-item label="名称">
+          <el-input v-model="qurey.inputName" placeholder="编号"></el-input>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" icon="el-icon-search" style="margin-left: 20px;" @click="submitQurey()">搜索</el-button>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" icon="el-icon-plus" @click="showAddFrom()">新增设备</el-button>
+          <el-button type="primary" icon="el-icon-download" @click="download()">导出数据</el-button>
+        </el-form-item>
+      </el-form>
+
+    </div>
     <div class="table" style="padding: 20px;">
-      <el-table :key="mainTableKey" :data="tableData" border style="width: 100%">
+      <el-table :data="tableData" border style="width: 100%">
         <el-table-column fixed prop="number" label="设备编号" width="150">
         </el-table-column>
-        <el-table-column prop="name" label="设备名称" width="150">
+        <el-table-column prop="name" label="设备名称">
         </el-table-column>
-        <el-table-column prop="type" label="类别" width="120">
+        <el-table-column prop="type" label="类别">
           <template slot-scope="scope">
             {{ getCodeNameByValue(typeOption, scope.row.type) }}
           </template>
@@ -16,19 +33,19 @@
         </el-table-column>
         <el-table-column prop="versionNumber" label="版本号" width="120">
         </el-table-column>
-        <el-table-column label="设备供应商" width="120">
+        <el-table-column label="设备供应商">
           <template slot-scope="scope">
             {{ getCodeNameByValue(supplierOption, scope.row.supplier) }}
           </template>
         </el-table-column>
-        <el-table-column prop="purpose" label="用途" width="120">
+        <el-table-column prop="purpose" label="用途">
           <template slot-scope="scope">
             {{ getCodeNameByValue(purposeOption, scope.row.purpose) }}
           </template>
         </el-table-column>
-        <el-table-column prop="laboratoryId" label="所属实验室" width="120">
+        <el-table-column prop="laboratoryId" label="所属实验室">
         </el-table-column>
-        <el-table-column prop="status" label="设备状态" width="120"
+        <el-table-column prop="status" label="设备状态"
           :filters="[{ text: '正常', value: '1' }, { text: '保修', value: '2' }, { text: '损坏', value: '3' }]"
           :filter-method="filterTag" filter-placement="bottom-end">
           <template slot-scope="scope">
@@ -59,7 +76,7 @@
       </el-pagination>
     </div>
     <!-- 查看diaglog -->
-    <el-dialog title="设备详细信息" :visible.sync="dialogTableVisible" @close='closeDialog'>
+    <el-dialog title="设备详细信息" :visible.sync="dialogTableVisible" @closed='closeDialog'>
       <el-descriptions direction="vertical" :column="2" border>
         <!-- 设备编号、设备名称 、类别 、软件系统 、版本号 、设备供应商 、用途 、所在实验室、 设备状态。 -->
         <el-descriptions-item label="设备编号">{{ simulationEquipment.number }}</el-descriptions-item>
@@ -80,8 +97,9 @@
       </el-descriptions>
     </el-dialog>
     <!-- 编辑和新增窗口 -->
-    <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" center @close='closeDialog'>
-      <el-form ref="form" :model="simulationEquipment" :rules="rules" :label-position="labelPosition" label-width="150px">
+    <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" center @closed='closeDialog'>
+      <el-form ref="simulationEquipment" :model="simulationEquipment" :rules="rules" :label-position="labelPosition"
+        label-width="150px">
         <!-- 设备编码、缩略图、设备名称 、类别 、软件系统 、版本号 、设备供应商 、用途 、所在实验室、 设备状态； -->
         <el-form-item label="设备编号" prop="number">
           <el-input v-model="simulationEquipment.number" autocomplete="off"></el-input>
@@ -127,9 +145,9 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" v-if="dialogStatus == 'add'" @click="submitAddForm(simulationEquipment)" style="
+        <el-button type="primary" v-if="dialogStatus == 'add'" @click="submitAddForm('simulationEquipment')" style="
           margin-right: 30px;">添加设备</el-button>
-        <el-button type="primary" v-if="dialogStatus == 'update'" @click="submitEditForm(simulationEquipment)" style="
+        <el-button type="primary" v-if="dialogStatus == 'update'" @click="submitEditForm('simulationEquipment')" style="
           margin-right: 30px;">修改设备</el-button>
         <el-button @click="dialogFormVisible = false">取 消</el-button>
       </div>
@@ -148,8 +166,7 @@
       </div>
     </el-dialog>
 
-    <el-dialog title="提示" :visible.sync="dialogNoticeVisible" width="30%" :before-close="handleClose"
-      @close='closeDialog'>
+    <el-dialog title="提示" :visible.sync="dialogNoticeVisible" width="30%" @close='closeDialog'>
       <span>是否要删除改仿真设备</span>
       <span slot="footer" class="dialog-footer">
         <el-button type="primary" @click="deleteEquipment(simulationEquipment)">确 定</el-button>
@@ -215,7 +232,9 @@ export default {
         this.tableData = res.data.data.records;
         this.total = res.data.data.total;
       })
-      this.mainTableKey = Math.random();
+      // console.log(this.mainTableKey);
+      // this.mainTableKey = Math.random();
+      // console.log(this.mainTableKey);
     },
     getRowData(row) {
       this.simulationEquipment.simulationEquipmentId = row.simulationEquipmentId;
@@ -287,16 +306,26 @@ export default {
       return null;
     },
     submitEditForm(simulationEquipment) {
-      this.request.post(simulationEquipmentUrl.updateSimulationEquipment, simulationEquipment).then(res => {
-        if (res.code == 200) {
-          this.$message({
-            message: '修改成功',
-            type: 'success'
-          });
+      this.$refs[simulationEquipment].validate((valid) => {
+        if (valid) {
+          let params = this.simulationEquipment;
+          this.request.post(simulationEquipmentUrl.updateSimulationEquipment, params).then(res => {
+            if (res.code == 200) {
+              this.$message({
+                message: '修改成功',
+                type: 'success'
+              });
+            }
+          })
+          this.listSimulationEquipmentList();
+          this.listSimulationEquipmentList();
+          this.dialogFormVisible = false;
+        } else {
+          console.log('error submit!!');
+          return false;
         }
-      })
-      this.dialogFormVisible = false;
-      this.listSimulationEquipmentList();
+      });
+
     },
     submitStatu(simulationEquipment) {
       this.request.post(simulationEquipmentUrl.updateSimulationEquipment, simulationEquipment).then(res => {
@@ -308,6 +337,7 @@ export default {
         }
       })
       this.dialogStatusVisible = false;
+      this.listSimulationEquipmentList();
       this.listSimulationEquipmentList();
     },
     deleteEquipment(simulationEquipment) {
@@ -321,19 +351,28 @@ export default {
       })
       this.dialogNoticeVisible = false;
       this.listSimulationEquipmentList();
+      this.listSimulationEquipmentList();
     },
     submitAddForm(simulationEquipment) {
-      this.request.post(simulationEquipmentUrl.addSimulationEquipment, simulationEquipment).then(res => {
-        if (res.code == 200) {
-          this.$message({
-            message: '新增仿真设备成功',
-            type: 'success'
-          });
+      this.$refs[simulationEquipment].validate((valid) => {
+        if (valid) {
+          let params = this.simulationEquipment;
+          this.request.post(simulationEquipmentUrl.addSimulationEquipment, params).then(res => {
+            if (res.code == 200) {
+              this.$message({
+                message: '新增仿真设备成功',
+                type: 'success'
+              });
+            }
+          })
+          this.dialogFormVisible = false;
+          this.listSimulationEquipmentList();
+          this.listSimulationEquipmentList();
+        } else {
+          console.log('error submit!!');
+          return false;
         }
-      })
-      this.dialogFormVisible = false;
-      //this.clearSimulationData();
-      this.listSimulationEquipmentList();
+      });
     },
     clearSimulationData() {
       this.simulationEquipment.simulationEquipmentId = '';
@@ -353,6 +392,48 @@ export default {
     closeDialog() {
       this.clearSimulationData();
     },
+    download() {
+      window.location = 'http://localhost:8088/simulationEquipment/downloadExcel'
+    },
+    //查询
+    submitQurey() {
+      if ((typeof this.qurey.inputNumber == 'string' && this.qurey.inputNumber.length > 0) || (typeof this.qurey.inputName == 'string' && this.qurey.inputName.length > 0)) {
+        let url = '';
+        if (typeof this.qurey.inputNumber == 'string' && this.qurey.inputNumber.length > 0) {
+          url = '?current=' + this.currPage + "&size=" + this.pageSize + '&number=' + this.qurey.inputNumber;
+        } else {
+          url = '?current=' + this.currPage + "&size=" + this.pageSize + '&name=' + this.qurey.inputName;
+        }
+        this.request.get(simulationEquipmentUrl.qurey + url).then(res => {
+          if (res.code == 200) {
+            if (res.data.data.total != 0) {
+              res.data.data.records.forEach((item, index) => {
+                item.createTime = dateFormat(item.createTime);
+                item.updateTime = dateFormat(item.updateTime);
+                item.softwareSystem = nullFormat(item.softwareSystem);
+                item.versionNumber = nullFormat(item.versionNumber);
+                //item.laboratoryId = nullFormat(item.laboratoryId);
+              })
+              this.tableData = res.data.data.records;
+              console.log(this.tableData.records);
+              this.total = res.data.data.total;
+              this.inputName = '';
+              this.inputNumber = '';
+            } else {
+              this.$message({
+                message: '没有查询到数据',
+                type: 'warning'
+              });
+            }
+          }
+        })
+      } else {
+        this.$message({
+          message: '请输入查询条件',
+          type: 'warning'
+        });
+      }
+    }
   },
 
   data() {
@@ -361,10 +442,10 @@ export default {
       mainTableKey: 1,
       total: 0,
       currPage: 1,  //默认第一页
-      pageSize: 12,
+      pageSize: 10,
       formLabelWidth: '150px',
       labelPosition: 'left',
-      //默认展示12条数据
+      //默认展示10条数据
       perpage: [
         { value: 10, label: "10" },
         { value: 20, label: "20" },
@@ -399,12 +480,17 @@ export default {
         createTime: "",
         updateTime: "",
       },
+      qurey: {
+        inputNumber: '',
+        inputName: '',
+      },
       rules: {
         name: [
           {
             required: true,
             message: "请输入设备名称",
-            trigger: "blur"
+            trigger: ['blur', 'change'],
+            type: '',
           },
           {
             min: 3,
@@ -417,7 +503,7 @@ export default {
           {
             required: true,
             message: "请输入设备编号",
-            trigger: "blur"
+            trigger: ['blur', 'change']
           },
           {
             min: 3,
@@ -430,21 +516,21 @@ export default {
           {
             required: true,
             message: "请选择类型",
-            trigger: "blur"
+            trigger: "change"
           }
         ],
         purpose: [
           {
             required: true,
             message: "请选择用途",
-            trigger: "blur"
+            trigger: "change"
           }
         ],
         supplier: [
           {
             required: true,
             message: "请选择供应商",
-            trigger: "blur"
+            trigger: "change"
           }
         ],
         status: [

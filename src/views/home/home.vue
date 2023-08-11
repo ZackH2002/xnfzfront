@@ -19,6 +19,19 @@
             <NavMenu></NavMenu>
             <!-- 页面主体内容 -->
             <el-main>
+                <el-dialog title="用户信息" :visible.sync="dialogTableVisible" center>
+                    <el-descriptions direction="vertical" :column="2" border>
+                        <el-descriptions-item label="用户名">{{ user.account }}</el-descriptions-item>
+                        <el-descriptions-item label="姓名">{{ user.name }}</el-descriptions-item>
+                        <el-descriptions-item label="邮箱">{{ user.email }}</el-descriptions-item>
+                        <el-descriptions-item label="电话号码">{{ user.phone }}</el-descriptions-item>
+                        <el-descriptions-item label="用户类型">
+                            <el-tag size="small">{{ getCodeNameByValue(typeOption, user.type) }}</el-tag>
+                        </el-descriptions-item>
+                        <el-descriptions-item label="介绍">{{ user.intro }}</el-descriptions-item>
+                    </el-descriptions>
+
+                </el-dialog>
                 <!-- 显示子页面内容 -->
                 <router-view></router-view>
             </el-main>
@@ -28,9 +41,11 @@
 
 <script>
 import NavMenu from "./navMenu.vue"
+import { commonUrl } from "@/api/api";
 export default {
     data() {
         return {
+            dialogTableVisible: false,
             user: {
                 userId: '',
                 name: '',
@@ -43,6 +58,11 @@ export default {
                 createTime: '',
                 updateTime: ''
             },
+            typeOption: [{
+                codeValue: "",
+                codeName: "",
+            }],
+
         }
     },
     components: {
@@ -56,15 +76,32 @@ export default {
         },
         handleCommand(command) {
             if (command == 1) {
-
+                this.dialogTableVisible = true;
             } else if (command == 2) {
                 this.$store.commit("logout");
                 this.$router.push("/");
             }
-        }
+        },
+        getCodeNameByValue(typeOption, targetCodeValue) {
+            for (let i = 0; i < typeOption.length; i++) {
+                if (typeOption[i].codeValue == targetCodeValue) {
+                    return typeOption[i].codeName;
+                }
+            }
+            return null;
+        },
+        loadUserType() {
+            this.request.get(commonUrl.loadDictionaryData + "userType").then(res => {
+                if (res.code == 200) {
+                    this.typeOption = res.data.data;
+                    this.$store.commit("setUserType", res.data.data);
+                }
+            })
+        },
     },
     mounted() {
         this.user = this.$store.state.user;
+        this.loadUserType();
     }
 }
 </script>

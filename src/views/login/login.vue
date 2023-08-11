@@ -26,86 +26,91 @@
 </template>
 
 <script>
-import {commonUrl} from "../../api/api.js"
-    export default{
-        data(){
-            return{
-                imgSrc: require('../../assets/loginbg.png'),
-				form: {
-					account: "",
-					password: ""
-				},
-				rules: {
-					account: [
-						{
-							required: true,
-							message: "请输入账号",
-							trigger: "blur"
-						},
-						{
-							min: 3,
-							max: 12,
-							message: "长度为3-12之间",
-							trigger: "blur"
-						}
-					],
-					password: [
-						{
-							required: true,
-							message: "请输入密码",
-							trigger: "blur"
-						}
-					]
-				}
-			}
-        },
-		methods: {
-			login(formName){
-				this.$refs[formName].validate((valid)=>{
-					if(valid){
-						//登录
-						let params = {
-							account: this.form.account,
-							password: this.form.password
-						}
-						//发送登录请求
-						this.request.post(commonUrl.login, params).then(res=>{
-							if(res.code == 200){
-								//获取data当中的菜单值
-								res.data.menus.forEach((item, index)=>{
-									const menu = {
-										path: item.path,
-										name: item.cname,
-										component: ()=>import("@/views"+item.component)
-									}
-									this.$router.addRoute("home", menu); //添加动态菜单，并指定路由
-								});
-								this.$store.commit("setMenu", JSON.stringify(res.data.menus)) //菜单放到缓存当中
-								//token和user放到缓存中
-								this.$store.commit("setToken", res.data.token);
-								this.$store.commit("setUser", res.data.user);
-								this.$router.push("/home/content");
-							}
-							else{
-								this.$message.error(res.message);
-							}
-						})
-					}
-					else{
-						//校验失败
-						this.$message.error("请根据提示正确填写用户名和密码");
-						return false;
-					}
-				});
+import { commonUrl } from "../../api/api.js"
+export default {
+	data() {
+		return {
+			imgSrc: require('../../assets/loginbg.png'),
+			form: {
+				account: "",
+				password: ""
 			},
-			register() {
-			this.$router.push("/register")
-			}
-		},
-		created() {
-
+			rules: {
+				account: [
+					{
+						required: true,
+						message: "请输入账号",
+						trigger: "blur"
+					},
+					{
+						min: 3,
+						max: 12,
+						message: "长度为3-12之间",
+						trigger: "blur"
+					}
+				],
+				password: [
+					{
+						required: true,
+						message: "请输入密码",
+						trigger: "blur"
+					}
+				]
+			},
+			typeOption: [{
+				codeValue: "",
+				codeName: "",
+			}],
 		}
-	
+	},
+	methods: {
+		login(formName) {
+			this.$refs[formName].validate((valid) => {
+				if (valid) {
+					//登录
+					let params = {
+						account: this.form.account,
+						password: this.form.password
+					}
+					//发送登录请求
+					this.request.post(commonUrl.login, params).then(res => {
+						if (res.code == 200) {
+							//获取data当中的菜单值
+							res.data.menus.forEach((item, index) => {
+								const menu = {
+									path: item.path,
+									name: item.cname,
+									component: () => import("@/views" + item.component)
+								}
+								this.$router.addRoute("home", menu); //添加动态菜单，并指定路由
+							});
+							this.$store.commit("setMenu", JSON.stringify(res.data.menus)) //菜单放到缓存当中
+							//token和user放到缓存中
+							this.$store.commit("setToken", res.data.token);
+							this.$store.commit("setUser", res.data.user);
+							this.$router.push("/home/content");
+						}
+						else {
+							this.$message.error(res.message);
+						}
+					})
+				}
+				else {
+					//校验失败
+					this.$message.error("请根据提示正确填写用户名和密码");
+					return false;
+				}
+			});
+		},
+		register() {
+			this.$router.push("/register")
+		},
+
+	},
+	created() {
+
+	}
+
 }
 </script>
 
