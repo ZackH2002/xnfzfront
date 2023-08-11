@@ -18,8 +18,13 @@ let simulationEquipmentUrl = {
     addSimulationEquipment: "/simulationEquipment/addSimulationEquipment",
 }
 
+let laboratoryUrl = {
+    listLaboratory: "/Laboratory/listLaboratory",
+}
+
 export {
     commonUrl,
     userUrl,
-    simulationEquipmentUrl
+    simulationEquipmentUrl,
+    laboratoryUrl
 }
