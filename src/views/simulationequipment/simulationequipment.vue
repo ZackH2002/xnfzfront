@@ -1,14 +1,30 @@
 <template>
   <div>
-    <el-button type="primary" icon="el-icon-edit" @click="showAddFrom()">新增设备</el-button>
-    <el-button type="primary" icon="el-icon-edit" @click="download()">导出数据</el-button>
+    <div>
+      <el-form :inline="true" :model="qurey" class="demo-form-inline">
+        <el-form-item label="编号">
+          <el-input v-model="qurey.inputNumber" placeholder="编号"></el-input>
+        </el-form-item>
+        <el-form-item label="名称">
+          <el-input v-model="qurey.inputName" placeholder="编号"></el-input>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" icon="el-icon-search" style="margin-left: 20px;" @click="submitQurey()">搜索</el-button>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" icon="el-icon-plus" @click="showAddFrom()">新增设备</el-button>
+          <el-button type="primary" icon="el-icon-download" @click="download()">导出数据</el-button>
+        </el-form-item>
+      </el-form>
+
+    </div>
     <div class="table" style="padding: 20px;">
       <el-table :data="tableData" border style="width: 100%">
-        <el-table-column prop="number" label="设备编号" width="150">
+        <el-table-column fixed prop="number" label="设备编号" width="150">
         </el-table-column>
-        <el-table-column prop="name" label="设备名称" width="150">
+        <el-table-column prop="name" label="设备名称">
         </el-table-column>
-        <el-table-column prop="type" label="类别" width="120">
+        <el-table-column prop="type" label="类别">
           <template slot-scope="scope">
             {{ getCodeNameByValue(typeOption, scope.row.type) }}
           </template>
@@ -17,19 +33,19 @@
         </el-table-column>
         <el-table-column prop="versionNumber" label="版本号" width="120">
         </el-table-column>
-        <el-table-column label="设备供应商" width="120">
+        <el-table-column label="设备供应商">
           <template slot-scope="scope">
             {{ getCodeNameByValue(supplierOption, scope.row.supplier) }}
           </template>
         </el-table-column>
-        <el-table-column prop="purpose" label="用途" width="120">
+        <el-table-column prop="purpose" label="用途">
           <template slot-scope="scope">
             {{ getCodeNameByValue(purposeOption, scope.row.purpose) }}
           </template>
         </el-table-column>
-        <el-table-column prop="laboratoryId" label="所属实验室" width="120">
+        <el-table-column prop="laboratoryId" label="所属实验室">
         </el-table-column>
-        <el-table-column prop="status" label="设备状态" width="120"
+        <el-table-column prop="status" label="设备状态"
           :filters="[{ text: '正常', value: '1' }, { text: '保修', value: '2' }, { text: '损坏', value: '3' }]"
           :filter-method="filterTag" filter-placement="bottom-end">
           <template slot-scope="scope">
@@ -379,7 +395,45 @@ export default {
     download() {
       window.location = 'http://localhost:8088/simulationEquipment/downloadExcel'
     },
-
+    //查询
+    submitQurey() {
+      if ((typeof this.qurey.inputNumber == 'string' && this.qurey.inputNumber.length > 0) || (typeof this.qurey.inputName == 'string' && this.qurey.inputName.length > 0)) {
+        let url = '';
+        if (typeof this.qurey.inputNumber == 'string' && this.qurey.inputNumber.length > 0) {
+          url = '?current=' + this.currPage + "&size=" + this.pageSize + '&number=' + this.qurey.inputNumber;
+        } else {
+          url = '?current=' + this.currPage + "&size=" + this.pageSize + '&name=' + this.qurey.inputName;
+        }
+        this.request.get(simulationEquipmentUrl.qurey + url).then(res => {
+          if (res.code == 200) {
+            if (res.data.data.total != 0) {
+              res.data.data.records.forEach((item, index) => {
+                item.createTime = dateFormat(item.createTime);
+                item.updateTime = dateFormat(item.updateTime);
+                item.softwareSystem = nullFormat(item.softwareSystem);
+                item.versionNumber = nullFormat(item.versionNumber);
+                //item.laboratoryId = nullFormat(item.laboratoryId);
+              })
+              this.tableData = res.data.data.records;
+              console.log(this.tableData.records);
+              this.total = res.data.data.total;
+              this.inputName = '';
+              this.inputNumber = '';
+            } else {
+              this.$message({
+                message: '没有查询到数据',
+                type: 'warning'
+              });
+            }
+          }
+        })
+      } else {
+        this.$message({
+          message: '请输入查询条件',
+          type: 'warning'
+        });
+      }
+    }
   },
 
   data() {
@@ -425,6 +479,10 @@ export default {
         thumbnail: null,
         createTime: "",
         updateTime: "",
+      },
+      qurey: {
+        inputNumber: '',
+        inputName: '',
       },
       rules: {
         name: [

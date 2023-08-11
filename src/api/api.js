@@ -17,6 +17,7 @@ let simulationEquipmentUrl = {
     deleteSimulationEquipment: "/simulationEquipment/deleteSimulationEquipment",
     addSimulationEquipment: "/simulationEquipment/addSimulationEquipment",
     download: "/simulationEquipment/downloadExcel",
+    qurey: "/simulationEquipment/getSimulationEquipment",
 }
 
 export {
