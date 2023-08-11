@@ -20,8 +20,13 @@ let simulationEquipmentUrl = {
     qurey: "/simulationEquipment/getSimulationEquipment",
 }
 
+let laboratoryUrl = {
+    listLaboratory: "/Laboratory/listLaboratory",
+}
+
 export {
     commonUrl,
     userUrl,
-    simulationEquipmentUrl
+    simulationEquipmentUrl,
+    laboratoryUrl
 }
