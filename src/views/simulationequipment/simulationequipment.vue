@@ -16,7 +16,6 @@
           <el-button type="primary" icon="el-icon-download" @click="download()">导出数据</el-button>
         </el-form-item>
       </el-form>
-
     </div>
     <div class="table" style="padding: 20px;">
       <el-table :data="tableData" border style="width: 100%">
@@ -44,6 +43,9 @@
           </template>
         </el-table-column>
         <el-table-column prop="laboratoryId" label="所属实验室">
+          <template slot-scope="scope">
+            {{ getCodeNameByValue(laboratoryOption, scope.row.laboratoryId) }}
+          </template>
         </el-table-column>
         <el-table-column prop="status" label="设备状态"
           :filters="[{ text: '正常', value: '1' }, { text: '保修', value: '2' }, { text: '损坏', value: '3' }]"
@@ -58,12 +60,23 @@
             {{ time(scope.row) }}
           </template>
         </el-table-column>
-        <el-table-column fixed="right" label="操作" width="220">
+        <el-table-column fixed="right" label="操作" width="200">
           <template slot-scope="scope">
-            <el-button @click="viewDetails(scope.row)" type="text" size="small">查看</el-button>
-            <el-button @click="showUpdateFrom(scope.row)" type="text" size="small">编辑</el-button>
-            <el-button @click="updateStatu(scope.row)" type="text" size="small">设备状态操作</el-button>
-            <el-button @click="showDelete(scope.row)" type="text" size="small">删除</el-button>
+            <el-button-group>
+              <el-tooltip class="item" effect="dark" content="查看" placement="bottom">
+                <el-button @click="viewDetails(scope.row)" type="primary" size="small" icon="el-icon-info"></el-button>
+              </el-tooltip>
+              <el-tooltip class="item" effect="dark" content="编辑" placement="bottom">
+                <el-button @click="showUpdateFrom(scope.row)" type="primary" size="small"
+                  icon="el-icon-edit-outline"></el-button>
+              </el-tooltip>
+              <el-tooltip class="item" effect="dark" content="设备状态操作" placement="bottom">
+                <el-button @click="updateStatu(scope.row)" type="primary" size="small" icon="el-icon-setting"></el-button>
+              </el-tooltip>
+              <el-tooltip class="item" effect="dark" content="删除" placement="bottom">
+                <el-button @click="showDelete(scope.row)" type="primary" size="small" icon="el-icon-delete"></el-button>
+              </el-tooltip>
+            </el-button-group>
           </template>
         </el-table-column>
       </el-table>
@@ -137,6 +150,13 @@
             </el-option>
           </el-select>
         </el-form-item>
+        <el-form-item label="所属实验室" prop="laboratoryId">
+          <el-select v-model="simulationEquipment.laboratoryId" placeholder="请选择">
+            <el-option v-for="item in laboratoryOption" :key="item.codeValue" :label="item.codeName"
+              :value="item.codeValue">
+            </el-option>
+          </el-select>
+        </el-form-item>
         <el-form-item v-if="dialogStatus == 'add'" label="设备状态" prop="status">
           <el-select v-model="simulationEquipment.status" placeholder="请选择">
             <el-option v-for="item in statusOption" :key="item.codeValue" :label="item.codeName" :value="item.codeValue">
@@ -178,7 +198,7 @@
 <style></style>
 <script>
 import {
-  simulationEquipmentUrl
+  simulationEquipmentUrl, laboratoryUrl
 } from "../../api/api.js";
 import { dateFormat } from "../../utils/common.js";
 import { nullFormat } from "../../utils/common.js";
@@ -296,6 +316,23 @@ export default {
           this.statusOption = res.data.data;
         }
       })
+    },
+    loadLaboratoryOption() {
+      // Make the GET request using this.request.get() and handle the response
+      this.request.get(laboratoryUrl.getList).then(res => {
+        if (res.code === 200) {
+          // Create a new array to store the modified data
+          const modifiedOptions = res.data.data.map(item => {
+            return {
+              codeValue: item.laboratoryId,
+              codeName: item.laboratoryName
+            };
+          });
+          // Assign the modified data to this.laboratoryOption
+          this.laboratoryOption = modifiedOptions;
+          console.log(this.laboratoryOption[0]);
+        }
+      });
     },
     getCodeNameByValue(typeOption, targetCodeValue) {
       for (let i = 0; i < typeOption.length; i++) {
@@ -539,7 +576,12 @@ export default {
             message: "请选择设备状态",
             trigger: "change"
           }
-        ]
+        ],
+        laboratoryId: [{
+          required: true,
+          message: "请选择所属实验室",
+          trigger: "change"
+        }]
       },
       typeOption: [{
         codeValue: "",
@@ -557,6 +599,10 @@ export default {
         codeValue: "",
         codeName: "",
       }],
+      laboratoryOption: [{
+        codeValue: null,
+        codeName: "",
+      }],
       value: ''
     }
   },
@@ -566,6 +612,7 @@ export default {
     this.loadSupplier();
     this.loadPurpose();
     this.loadStatus();
+    this.loadLaboratoryOption();
   }
 }
 </script>

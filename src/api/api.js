@@ -22,6 +22,8 @@ let simulationEquipmentUrl = {
 
 let laboratoryUrl = {
     listLaboratory: "/Laboratory/listLaboratory",
+    getNumberOfSEByLabId: "/simulationEquipment/getNumberOfSEByLabId",
+    getList: "/Laboratory/getList"
 }
 
 export {
