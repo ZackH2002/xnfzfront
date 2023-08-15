@@ -275,7 +275,6 @@ export default {
       })
       this.dialogDeleteVisible = false;
       this.listLaboratory();
-      this.listLaboratory();
     },
     submitAddForm(lab){
       // 提交添加实验室表单
@@ -290,7 +289,6 @@ export default {
                 type: "success"
               });
               this.dialogFormVisible = false;
-              this.listLaboratory();
               this.listLaboratory();
             }
           })
@@ -314,7 +312,6 @@ export default {
               })
               this.dialogFormVisible = false;
               this.dialogTableVisible = false;
-              this.listLaboratory();
               this.listLaboratory();
             }
           })

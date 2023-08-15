@@ -357,9 +357,8 @@ export default {
               });
             }
           })
-          this.listSimulationEquipmentList();
-          this.listSimulationEquipmentList();
           this.dialogFormVisible = false;
+          this.listSimulationEquipmentList();
         } else {
           console.log('error submit!!');
           return false;
@@ -378,7 +377,6 @@ export default {
       })
       this.dialogStatusVisible = false;
       this.listSimulationEquipmentList();
-      this.listSimulationEquipmentList();
     },
     deleteEquipment(simulationEquipment) {
       this.request.post(simulationEquipmentUrl.deleteSimulationEquipment + "?simulationEquipmentId=" + simulationEquipment.simulationEquipmentId).then(res => {
@@ -390,7 +388,6 @@ export default {
         }
       })
       this.dialogNoticeVisible = false;
-      this.listSimulationEquipmentList();
       this.listSimulationEquipmentList();
     },
     submitAddForm(simulationEquipment) {
@@ -406,7 +403,6 @@ export default {
             }
           })
           this.dialogFormVisible = false;
-          this.listSimulationEquipmentList();
           this.listSimulationEquipmentList();
         } else {
           console.log('error submit!!');
