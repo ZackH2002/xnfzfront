@@ -3,7 +3,7 @@
     <el-aside width="200px">
         <el-row class="tac">
             <el-col :span="24">
-                <el-menu default-active="2" router class="el-menu-vertical-demo">
+                <el-menu :default-active="$route.path" router class="el-menu-vertical-demo">
                     <el-menu-item v-for="(item, index) in listData" :index="item.path" :key="index"
                         v-if="item.path !== null && item.components !== null && item.pid === 0">
                         <i :class="item.icon"></i>

@@ -18,12 +18,16 @@ let simulationEquipmentUrl = {
     addSimulationEquipment: "/simulationEquipment/addSimulationEquipment",
     download: "/simulationEquipment/downloadExcel",
     qurey: "/simulationEquipment/getSimulationEquipment",
+    getSimulationEquipmentByLaboratoryId: "/simulationEquipment/getSEByLaboratoryId"
 }
 
 let laboratoryUrl = {
     listLaboratory: "/Laboratory/listLaboratory",
     getNumberOfSEByLabId: "/simulationEquipment/getNumberOfSEByLabId",
-    getList: "/Laboratory/getList"
+    getList: "/Laboratory/getList",
+    addLaboratory: "/Laboratory/addLaboratory",
+    updateLaboratory: "/Laboratory/updateLaboratory",
+    deleteLaboratory: "/Laboratory/deleteLaboratory"
 }
 
 export {
