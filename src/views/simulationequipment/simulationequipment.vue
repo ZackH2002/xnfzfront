@@ -244,6 +244,9 @@ export default {
       this.listSimulationEquipmentList();
     },
     listSimulationEquipmentList() {
+      if(this.$route.query.laboratoryId != undefined){
+      this.showLaboratorySimulationEquipments();
+      }else{
       this.request.get(simulationEquipmentUrl.qureySimulationEquipmentList + "?current=" + this.currPage + "&size=" + this.pageSize).then(res => {
         res.data.data.records.forEach((item, index) => {
           item.createTime = dateFormat(item.createTime);
@@ -255,6 +258,7 @@ export default {
         this.tableData = res.data.data.records;
         this.total = res.data.data.total;
       })
+    }
       // console.log(this.mainTableKey);
       // this.mainTableKey = Math.random();
       // console.log(this.mainTableKey);
@@ -628,9 +632,6 @@ export default {
     this.loadPurpose();
     this.loadStatus();
     this.loadLaboratoryOption();
-    if(this.$route.query.laboratoryId != undefined){
-      this.showLaboratorySimulationEquipments();
-    }
   }
 }
 </script>
