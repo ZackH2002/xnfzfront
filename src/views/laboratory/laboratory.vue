@@ -12,6 +12,11 @@
     </el-table>
   </div> -->
   <!-- 显示实验室卡片 -->
+ <el-row> 
+  <div style="float: left; margin-left: 4px; margin-bottom: 20px;">
+    <el-button type="primary" icon="el-icon-plus" @click="showAddFrom()" >新增实验室</el-button>
+  </div>
+</el-row>
     <el-row :gutter="20">
       <el-col class="lab-el-col" :span="6" v-for=" (item) in laboratoryData" :key="item.laboratoryId">
         <el-card :body-style="{ padding: '0px' }">
@@ -34,20 +39,13 @@
       </el-col>
     </el-row>
     <!--控制分页部分-->
-    <el-row>
-    <el-col :span="22">
+   
     <div class="pagaination-tool" style="padding:15px; ">
       <!--elementUI的分页控件-->
       <el-pagination background :current-page.sync="currPage" @size-change="handleSizeChange"
         @current-change="handleCurrentChange" :page-size="pageSize" layout="prev, pager, next, jumper" :total="total">
       </el-pagination>
     </div>
-  </el-col>
-    <el-col :span="30">
-      <el-button type="primary" icon="el-icon-plus" @click="showAddFrom()">新增实验室</el-button>
-    </el-col>
-  </el-row>
-
     <!-- 查看diaglog -->
     <el-dialog title="实验室详细信息" :visible.sync="dialogTableVisible" @close='closeDialog'>
       <el-descriptions direction="vertical" :column="2" border>
@@ -92,7 +90,7 @@
 
           <el-col :span="11">
             <el-form-item label="工位数" prop="stationNum">
-              <el-input v-model="lab.stationNum"></el-input>
+              <el-input v-model="lab.stationNum" oninput="value=value.replace(/[^0-9.]/g,'')"></el-input>
             </el-form-item>
           </el-col>
         </el-row>
@@ -100,13 +98,13 @@
         <el-row>
           <el-col :span="11">
             <el-form-item label="实验室面积" prop="area">
-              <el-input v-model="lab.area" placeholder="单位(m²)"></el-input>
+              <el-input v-model="lab.area" placeholder="单位(m²)" oninput="value=value.replace(/[^0-9.]/g,'')"></el-input>
             </el-form-item>
           </el-col>
 
           <el-col :span="11">
             <el-form-item label="设施总值" prop="facilitiesPrice">
-              <el-input v-model="lab.facilitiesPrice" placeholder="单位(万元)"></el-input>
+              <el-input v-model="lab.facilitiesPrice" placeholder="单位(万元)" oninput="value=value.replace(/[^0-9.]/g,'')"></el-input>
             </el-form-item>
           </el-col>
         </el-row>
@@ -274,6 +272,7 @@ export default {
         }
       })
       this.dialogDeleteVisible = false;
+      this.listLaboratory();
       this.listLaboratory();
     },
     submitAddForm(lab){
