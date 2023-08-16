@@ -9,7 +9,7 @@
 			<el-col :span="8">
 				<div class="grid-content bg-purple-light">
 					<el-form ref="form" :rules="rules" :model="form" label-width="80px" class="login-form">
-						<h3>欢迎登录实训请假管理系统</h3>
+						<h3>欢迎登录虚拟仿真实训教学管理及资源共享云平台</h3>
 						<el-form-item label="账号" prop="account">
 							<el-input v-model="form.account"></el-input>
 						</el-form-item>

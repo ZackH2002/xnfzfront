@@ -21,7 +21,7 @@
       <el-col class="lab-el-col" :span="6" v-for=" (item) in laboratoryData" :key="item.laboratoryId">
         <el-card :body-style="{ padding: '0px' }">
           <div class="clearfix">
-            <span style="float: left; font-size: 26px;">{{ item.laboratoryName }}</span>
+            <span style="float: left; font-size:calc(100vw * 22 / 1920); ">{{ item.laboratoryName }}</span>
             <el-button style="float: right;" type="primary" @click="simulationEquipment(item)">管理实验室设备</el-button>
           </div>
           <div style="padding: 15px;" @click="viewDetails(item)">
