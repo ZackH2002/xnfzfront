@@ -90,7 +90,7 @@
       </el-pagination>
     </div>
     <!-- 查看diaglog -->
-    <el-dialog title="设备详细信息" :visible.sync="dialogTableVisible" @closed='closeDialog'>
+    <el-dialog title="设备详细信息" :visible.sync="dialogTableVisible" @closed='closeViewDiaglog()'>
       <el-descriptions direction="vertical" :column="2" border>
         <!-- 设备编号、设备名称 、类别 、软件系统 、版本号 、设备供应商 、用途 、所在实验室、 设备状态。 -->
         <el-descriptions-item label="设备编号">{{ simulationEquipment.number }}</el-descriptions-item>
@@ -111,7 +111,7 @@
       </el-descriptions>
     </el-dialog>
     <!-- 编辑和新增窗口 -->
-    <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" center @closed='closeDialog'>
+    <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" center @closed='closeDialog()'>
       <el-form ref="simulationEquipment" :model="simulationEquipment" :rules="rules" :label-position="labelPosition"
         label-width="150px">
         <!-- 设备编码、缩略图、设备名称 、类别 、软件系统 、版本号 、设备供应商 、用途 、所在实验室、 设备状态； -->
@@ -423,7 +423,6 @@ export default {
       });
     },
     clearSimulationData() {
-      this.$refs.simulationEquipment.resetFields(); // 重置表单字段
       this.simulationEquipment.simulationEquipmentId = '';
       this.simulationEquipment.number = '';
       this.simulationEquipment.name = '';
@@ -439,6 +438,12 @@ export default {
     },
     //关闭对话框清空数据
     closeDialog() {
+      this.$refs.simulationEquipment.resetFields();
+      console.log("清空");
+      this.clearSimulationData();
+    },
+    //关闭查看对话框
+    closeViewDiaglog() {
       this.clearSimulationData();
     },
     download() {
