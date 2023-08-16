@@ -85,7 +85,8 @@
     <div class="pagaination-tool" style="padding:15px; ">
       <!--elementUI的分页控件-->
       <el-pagination background :current-page.sync="currPage" @size-change="handleSizeChange"
-        @current-change="handleCurrentChange" :page-size="pageSize" layout="prev, pager, next, jumper" :total="total">
+        @current-change="handleCurrentChange" :page-size="pageSize" :page-sizes="[8, 10, 15, 20]"
+        layout="sizes, prev, pager, next, jumper" :total="total">
       </el-pagination>
     </div>
     <!-- 查看diaglog -->
@@ -400,10 +401,18 @@ export default {
                 message: '新增仿真设备成功',
                 type: 'success'
               });
+              console.log("新项目已添加："); // 调试
+              // Update the table data with the new item
+              this.listSimulationEquipmentList();// Assuming the new data is returned in the response
+
+              // Close the dialog and clear the simulationEquipment data
+              this.dialogFormVisible = false;
+              this.clearSimulationData();
             }
           })
-          this.dialogFormVisible = false;
-          this.listSimulationEquipmentList();
+          // this.dialogFormVisible = false;
+          // this.listSimulationEquipmentList();
+
         } else {
           console.log('error submit!!');
           return false;
@@ -411,6 +420,7 @@ export default {
       });
     },
     clearSimulationData() {
+      this.$refs.simulationEquipment.resetFields(); // 重置表单字段
       this.simulationEquipment.simulationEquipmentId = '';
       this.simulationEquipment.number = '';
       this.simulationEquipment.name = '';
@@ -471,21 +481,21 @@ export default {
       }
     },
     // 跳转出来显示该实验室的设备
-    showLaboratorySimulationEquipments(){ 
-      this.request.get(simulationEquipmentUrl.getSimulationEquipmentByLaboratoryId+"?current="+
-      this.currPage + "&size=" + this.pageSize+"&laboratoryId="+this.$route.query.laboratoryId).then(res=>{
-        if(res.code == 200){
-          res.data.data.records.forEach((item, index) => {
-            item.createTime = dateFormat(item.createTime);
-            item.updateTime = dateFormat(item.updateTime);
-            item.softwareSystem = nullFormat(item.softwareSystem);
-            item.versionNumber = nullFormat(item.versionNumber);
-          })
-          this.tableData = res.data.data.records;
-          console.log(this.tableData.records);
-          this.total = res.data.data.total;
-        }
-      })
+    showLaboratorySimulationEquipments() {
+      this.request.get(simulationEquipmentUrl.getSimulationEquipmentByLaboratoryId + "?current=" +
+        this.currPage + "&size=" + this.pageSize + "&laboratoryId=" + this.$route.query.laboratoryId).then(res => {
+          if (res.code == 200) {
+            res.data.data.records.forEach((item, index) => {
+              item.createTime = dateFormat(item.createTime);
+              item.updateTime = dateFormat(item.updateTime);
+              item.softwareSystem = nullFormat(item.softwareSystem);
+              item.versionNumber = nullFormat(item.versionNumber);
+            })
+            this.tableData = res.data.data.records;
+            console.log(this.tableData.records);
+            this.total = res.data.data.total;
+          }
+        })
     }
   },
 
@@ -629,7 +639,7 @@ export default {
     this.loadPurpose();
     this.loadStatus();
     this.loadLaboratoryOption();
-    if(this.$route.query.laboratoryId != undefined){
+    if (this.$route.query.laboratoryId != undefined) {
       this.showLaboratorySimulationEquipments();
     }
   }
