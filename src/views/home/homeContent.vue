@@ -55,7 +55,7 @@ export default {
             equipmentStatusChart: {},
             statusData: [],
             typeData: [],
-            myChartStyle: { width: "100%", height: "350px", padding: '10px' }, //图表样式
+            myChartStyle: { width: "100%", height: "450px", padding: '10px' }, //图表样式
             equipmentCount: null,
             laboratoryCount: null,
         }
@@ -114,7 +114,7 @@ export default {
                     {
                         label: {
                             show: true,
-                            formatter: "{b} : {c} ({d}%)" // b代表名称，c代表对应值，d代表百分比
+                            formatter: "{b} : {c}" // b代表名称，c代表对应值，d代表百分比
                         },
                         type: 'pie',
                         // radius: '50%',

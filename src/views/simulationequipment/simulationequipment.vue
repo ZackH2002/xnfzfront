@@ -245,17 +245,21 @@ export default {
       this.listSimulationEquipmentList();
     },
     listSimulationEquipmentList() {
-      this.request.get(simulationEquipmentUrl.qureySimulationEquipmentList + "?current=" + this.currPage + "&size=" + this.pageSize).then(res => {
-        res.data.data.records.forEach((item, index) => {
-          item.createTime = dateFormat(item.createTime);
-          item.updateTime = dateFormat(item.updateTime);
-          item.softwareSystem = nullFormat(item.softwareSystem);
-          item.versionNumber = nullFormat(item.versionNumber);
-          //item.laboratoryId = nullFormat(item.laboratoryId);
+      if (this.$route.query.laboratoryId != undefined) {
+        this.showLaboratorySimulationEquipments();
+      } else {
+        this.request.get(simulationEquipmentUrl.qureySimulationEquipmentList + "?current=" + this.currPage + "&size=" + this.pageSize).then(res => {
+          res.data.data.records.forEach((item, index) => {
+            item.createTime = dateFormat(item.createTime);
+            item.updateTime = dateFormat(item.updateTime);
+            item.softwareSystem = nullFormat(item.softwareSystem);
+            item.versionNumber = nullFormat(item.versionNumber);
+            //item.laboratoryId = nullFormat(item.laboratoryId);
+          })
+          this.tableData = res.data.data.records;
+          this.total = res.data.data.total;
         })
-        this.tableData = res.data.data.records;
-        this.total = res.data.data.total;
-      })
+      }
       // console.log(this.mainTableKey);
       // this.mainTableKey = Math.random();
       // console.log(this.mainTableKey);
@@ -365,7 +369,6 @@ export default {
           return false;
         }
       });
-
     },
     submitStatu(simulationEquipment) {
       this.request.post(simulationEquipmentUrl.updateSimulationEquipment, simulationEquipment).then(res => {
@@ -639,9 +642,6 @@ export default {
     this.loadPurpose();
     this.loadStatus();
     this.loadLaboratoryOption();
-    if (this.$route.query.laboratoryId != undefined) {
-      this.showLaboratorySimulationEquipments();
-    }
   }
 }
 </script>
