@@ -21,6 +21,7 @@ let simulationEquipmentUrl = {
     getStatusCounts: "/simulationEquipment/statusCounts",
     getTypeCounts: "/simulationEquipment/typeCounts",
     getSimulationEquipmentCount: "/simulationEquipment/count",
+    getSimulationEquipmentByLaboratoryId: "/simulationEquipment/getSEByLaboratoryId"
 }
 
 let laboratoryUrl = {
@@ -28,6 +29,9 @@ let laboratoryUrl = {
     getNumberOfSEByLabId: "/simulationEquipment/getNumberOfSEByLabId",
     getList: "/Laboratory/getList",
     getLaboratoryCount: "/Laboratory/getLaboratoryCount",
+    addLaboratory: "/Laboratory/addLaboratory",
+    updateLaboratory: "/Laboratory/updateLaboratory",
+    deleteLaboratory: "/Laboratory/deleteLaboratory"
 }
 
 export {

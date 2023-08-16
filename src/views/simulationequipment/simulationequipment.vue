@@ -126,17 +126,20 @@
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="软件系统和版本号">
-          <el-row>
-            <el-col :span="11">
-              软件系统<el-input v-model="simulationEquipment.softwareSystem"></el-input>
-            </el-col>
-            <el-col :span="11" style="float: right;">
-              版本号
+        <el-row>
+          <el-col :span="11">
+            <el-form-item label="软件系统">
+              <el-input v-model="simulationEquipment.softwareSystem"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="11" style="float: right;">
+            <el-form-item label="版本号">
               <el-input v-model="simulationEquipment.versionNumber"></el-input>
-            </el-col>
-          </el-row>
-        </el-form-item>
+            </el-form-item>
+          </el-col>
+        </el-row>
+
+
         <el-form-item label="设备供应商" prop="supplier">
           <el-select v-model="simulationEquipment.supplier" placeholder="请选择">
             <el-option v-for="item in supplierOption" :key="item.codeValue" :label="item.codeName"
@@ -354,9 +357,8 @@ export default {
               });
             }
           })
-          this.listSimulationEquipmentList();
-          this.listSimulationEquipmentList();
           this.dialogFormVisible = false;
+          this.listSimulationEquipmentList();
         } else {
           console.log('error submit!!');
           return false;
@@ -375,7 +377,6 @@ export default {
       })
       this.dialogStatusVisible = false;
       this.listSimulationEquipmentList();
-      this.listSimulationEquipmentList();
     },
     deleteEquipment(simulationEquipment) {
       this.request.post(simulationEquipmentUrl.deleteSimulationEquipment + "?simulationEquipmentId=" + simulationEquipment.simulationEquipmentId).then(res => {
@@ -387,7 +388,6 @@ export default {
         }
       })
       this.dialogNoticeVisible = false;
-      this.listSimulationEquipmentList();
       this.listSimulationEquipmentList();
     },
     submitAddForm(simulationEquipment) {
@@ -403,7 +403,6 @@ export default {
             }
           })
           this.dialogFormVisible = false;
-          this.listSimulationEquipmentList();
           this.listSimulationEquipmentList();
         } else {
           console.log('error submit!!');
@@ -470,6 +469,23 @@ export default {
           type: 'warning'
         });
       }
+    },
+    // 跳转出来显示该实验室的设备
+    showLaboratorySimulationEquipments(){ 
+      this.request.get(simulationEquipmentUrl.getSimulationEquipmentByLaboratoryId+"?current="+
+      this.currPage + "&size=" + this.pageSize+"&laboratoryId="+this.$route.query.laboratoryId).then(res=>{
+        if(res.code == 200){
+          res.data.data.records.forEach((item, index) => {
+            item.createTime = dateFormat(item.createTime);
+            item.updateTime = dateFormat(item.updateTime);
+            item.softwareSystem = nullFormat(item.softwareSystem);
+            item.versionNumber = nullFormat(item.versionNumber);
+          })
+          this.tableData = res.data.data.records;
+          console.log(this.tableData.records);
+          this.total = res.data.data.total;
+        }
+      })
     }
   },
 
@@ -613,6 +629,9 @@ export default {
     this.loadPurpose();
     this.loadStatus();
     this.loadLaboratoryOption();
+    if(this.$route.query.laboratoryId != undefined){
+      this.showLaboratorySimulationEquipments();
+    }
   }
 }
 </script>
