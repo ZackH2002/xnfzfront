@@ -64,17 +64,17 @@
           <template slot-scope="scope">
             <el-button-group>
               <el-tooltip class="item" effect="dark" content="查看" placement="bottom">
-                <el-button @click="viewDetails(scope.row)" type="primary" size="small" icon="el-icon-info"></el-button>
+                <el-button @click="viewDetails(scope.row)" type="info" size="small" icon="el-icon-info"></el-button>
               </el-tooltip>
               <el-tooltip class="item" effect="dark" content="编辑" placement="bottom">
-                <el-button @click="showUpdateFrom(scope.row)" type="primary" size="small"
+                <el-button @click="showUpdateFrom(scope.row)" type="success" size="small"
                   icon="el-icon-edit-outline"></el-button>
               </el-tooltip>
               <el-tooltip class="item" effect="dark" content="设备状态操作" placement="bottom">
                 <el-button @click="updateStatu(scope.row)" type="primary" size="small" icon="el-icon-setting"></el-button>
               </el-tooltip>
               <el-tooltip class="item" effect="dark" content="删除" placement="bottom">
-                <el-button @click="showDelete(scope.row)" type="primary" size="small" icon="el-icon-delete"></el-button>
+                <el-button @click="showDelete(scope.row)" type="danger" size="small" icon="el-icon-delete"></el-button>
               </el-tooltip>
             </el-button-group>
           </template>
