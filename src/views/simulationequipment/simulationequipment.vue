@@ -364,7 +364,6 @@ export default {
           return false;
         }
       });
-
     },
     submitStatu(simulationEquipment) {
       this.request.post(simulationEquipmentUrl.updateSimulationEquipment, simulationEquipment).then(res => {
